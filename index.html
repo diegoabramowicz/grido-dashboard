@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grido Go — Expansión</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F3EE;
+    --surface: #FFFFFF;
+    --surface-alt: #EEECE7;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.15);
+    --text-primary: #1A1916;
+    --text-secondary: #6B6860;
+    --text-tertiary: #9E9C97;
+    --green: #3A7D1E;
+    --green-bg: #EAF3DE;
+    --green-mid: #639922;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --amber-mid: #BA7517;
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+    --blue-mid: #378ADD;
+    --gray: #5F5E5A;
+    --gray-bg: #F1EFE8;
+    --red-grido: #D0021B;
+    --cyan-grido: #00AACC;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+  }
+
+  html { font-size: 16px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    background: var(--text-primary);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--red-grido);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo-text {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .nav-logo-sub {
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    margin-left: 4px;
+  }
+  .nav-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    background: var(--text-primary);
+    color: #fff;
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: var(--red-grido);
+    opacity: 0.06;
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 30%;
+    width: 200px; height: 200px;
+    background: var(--cyan-grido);
+    opacity: 0.05;
+    border-radius: 50%;
+  }
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+  .hero-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero-title strong {
+    font-weight: 600;
+    color: var(--red-grido);
+  }
+  .hero-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    margin-bottom: 2rem;
+  }
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .hero-metric {
+    background: rgba(255,255,255,0.04);
+    padding: 1.25rem 1.5rem;
+    transition: background 0.2s;
+  }
+  .hero-metric:hover { background: rgba(255,255,255,0.07); }
+  .hero-metric-value {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .hero-metric-value.accent { color: var(--red-grido); }
+  .hero-metric-value.green { color: #7BC950; }
+  .hero-metric-value.amber { color: #F0A040; }
+  .hero-metric-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ---- MAIN LAYOUT ---- */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* ---- SECTION ---- */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+  }
+  .section-count {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ---- CHARTS ROW ---- */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+  .chart-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  .chart-wrap {
+    position: relative;
+  }
+
+  /* ---- PIPELINE LEGEND ---- */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ---- STORE GRID ---- */
+  .stores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+    margin-bottom: 2rem;
+  }
+  .store-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .store-card:hover {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    transform: translateY(-1px);
+  }
+  .store-card.muted { opacity: 0.6; }
+  .store-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .store-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .store-meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-blue  { background: var(--blue-bg);  color: var(--blue);  }
+  .badge-gray  { background: var(--gray-bg);  color: var(--gray);  }
+
+  /* progress */
+  .progress-bg {
+    background: var(--surface-alt);
+    border-radius: 99px;
+    height: 4px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--green-mid);
+    transition: width 0.6s ease;
+  }
+  .progress-fill.amber { background: var(--amber-mid); }
+  .progress-fill.blue  { background: var(--blue-mid); }
+  .progress-fill.gray  { background: #C4C2BC; }
+
+  /* steps */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .step.done { color: var(--text-secondary); }
+  .step-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--surface-alt);
+    flex-shrink: 0;
+    border: 1px solid var(--border-strong);
+  }
+  .step.done .step-dot {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
+  }
+  .store-note {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 2px;
+  }
+  .store-days {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    background: var(--surface-alt);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  /* ---- STOCK ---- */
+  .stock-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+  .stock-list-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+  .stock-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stock-row:last-child { border-bottom: none; }
+  .stock-name { font-size: 13px; color: var(--text-secondary); }
+  .stock-nums {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stock-remaining {
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-primary);
+  }
+  .stock-total {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+  }
+  .stock-bar-bg {
+    width: 60px;
+    height: 4px;
+    background: var(--surface-alt);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .stock-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--blue-mid);
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 700px) {
+    .hero-metrics { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+    .stock-section { grid-template-columns: 1fr; }
+    .stores-grid { grid-template-columns: 1fr; }
+    main { padding: 1.25rem; }
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.5s ease both; }
+  .fade-up:nth-child(1) { animation-delay: 0.05s; }
+  .fade-up:nth-child(2) { animation-delay: 0.10s; }
+  .fade-up:nth-child(3) { animation-delay: 0.15s; }
+  .fade-up:nth-child(4) { animation-delay: 0.20s; }
+  .fade-up:nth-child(5) { animation-delay: 0.25s; }
+  .fade-up:nth-child(6) { animation-delay: 0.30s; }
+  .fade-up:nth-child(7) { animation-delay: 0.35s; }
+  .fade-up:nth-child(8) { animation-delay: 0.40s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-mark">GG</div>
+    <span class="nav-logo-text">Grido Go <span class="nav-logo-sub">/ Expansión</span></span>
+  </a>
+  <span class="nav-badge">Mayo 2026</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Proyecto · Expansión 100 KC</p>
+    <h1 class="hero-title">Seguimiento <strong>general</strong></h1>
+    <p class="hero-sub">Estado en tiempo real de las tiendas en proceso de expansión</p>
+    <div class="hero-metrics">
+      <div class="hero-metric">
+        <div class="hero-metric-value accent">8</div>
+        <div class="hero-metric-label">Tiendas activas</div>
+      </div>
+      <div class="hero-metric">
+        <div class="hero-metric-value green">2</div>
+        <div class="hero-metric-label">Enviadas y recibidas</div>
+      </div>
+      <div class="hero-metric">
+        <div class="hero-metric-value amber">2</div>
+        <div class="hero-metric-label">En proceso</div>
+      </div>
+      <div class="hero-metric">
+        <div class="hero-metric-value">4</div>
+        <div class="hero-metric-label">Pendientes de avance</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- CHARTS -->
+  <div class="charts-row" style="margin-top: 2rem;">
+    <div class="chart-card fade-up">
+      <div class="chart-card-title">Pipeline por tienda — etapas completadas</div>
+      <div class="chart-wrap" style="height: 240px;">
+        <canvas id="pipelineChart" role="img" aria-label="Pipeline de etapas completadas por tienda"></canvas>
+      </div>
+      <div class="legend" style="margin-top:12px;">
+        <div class="legend-item"><span class="legend-dot" style="background:#3A7D1E;"></span>Enviado y recibido</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#BA7517;"></span>En proceso</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#378ADD;"></span>Avanzó</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#C4C2BC;"></span>Sin avance</div>
+      </div>
+    </div>
+    <div class="chart-card fade-up">
+      <div class="chart-card-title">Stock de dispositivos — usado vs disponible</div>
+      <div class="chart-wrap" style="height: 240px;">
+        <canvas id="stockChart" role="img" aria-label="Stock de dispositivos usado vs disponible"></canvas>
+      </div>
+      <div class="legend" style="margin-top:12px;">
+        <div class="legend-item"><span class="legend-dot" style="background:#378ADD;"></span>Usado</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#B5D4F4;"></span>Disponible</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORES -->
+  <div class="section-header">
+    <span class="section-title">Estado por tienda</span>
+    <span class="section-count">8 tiendas</span>
+  </div>
+  <div class="stores-grid">
+
+    <div class="store-card fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">5202 · Tucumán XXXVI</div>
+          <div class="store-meta">Tucumán &middot; Mateto SAS &middot; Sergio Zottola Pareja</div>
+        </div>
+        <span class="badge badge-green">Enviado y recibido</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill" style="width:66%"></div></div>
+      <div class="steps">
+        <div class="step done"><span class="step-dot"></span>Presentación</div>
+        <div class="step done"><span class="step-dot"></span>Facturación</div>
+        <div class="step done"><span class="step-dot"></span>Envío</div>
+        <div class="step done"><span class="step-dot"></span>Recepción</div>
+        <div class="step"><span class="step-dot"></span>Instalación</div>
+        <div class="step"><span class="step-dot"></span>Go Live</div>
+      </div>
+      <div class="store-note">Remodelación pendiente por permisos municipales.</div>
+      <span class="store-days">142 días en seguimiento</span>
+    </div>
+
+    <div class="store-card fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">3544 · Puerto Madryn I</div>
+          <div class="store-meta">Chubut &middot; Base Azul SRL &middot; Verónica Soto</div>
+        </div>
+        <span class="badge badge-green">Enviado y recibido</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill" style="width:66%"></div></div>
+      <div class="steps">
+        <div class="step done"><span class="step-dot"></span>Presentación</div>
+        <div class="step done"><span class="step-dot"></span>Facturación</div>
+        <div class="step done"><span class="step-dot"></span>Envío</div>
+        <div class="step done"><span class="step-dot"></span>Recepción</div>
+        <div class="step"><span class="step-dot"></span>Instalación</div>
+        <div class="step"><span class="step-dot"></span>Go Live</div>
+      </div>
+      <div class="store-note">Aproximadamente un mes más de remodelación desde la recepción.</div>
+      <span class="store-days">91 días en seguimiento</span>
+    </div>
+
+    <div class="store-card fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">3743 · Gualeguaychú III</div>
+          <div class="store-meta">Entre Ríos &middot; Martín Massaferro</div>
+        </div>
+        <span class="badge badge-amber">En proceso</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill amber" style="width:16%"></div></div>
+      <div class="steps">
+        <div class="step done"><span class="step-dot"></span>Presentación</div>
+        <div class="step"><span class="step-dot"></span>Facturación</div>
+        <div class="step"><span class="step-dot"></span>Envío</div>
+        <div class="step"><span class="step-dot"></span>Recepción</div>
+        <div class="step"><span class="step-dot"></span>Instalación</div>
+        <div class="step"><span class="step-dot"></span>Go Live</div>
+      </div>
+      <span class="store-days">62 días en seguimiento</span>
+    </div>
+
+    <div class="store-card fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">3973 · Villa Gesell</div>
+          <div class="store-meta">Buenos Aires &middot; Rafael Alava</div>
+        </div>
+        <span class="badge badge-amber">En proceso</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill amber" style="width:16%"></div></div>
+      <div class="steps">
+        <div class="step done"><span class="step-dot"></span>Presentación</div>
+        <div class="step"><span class="step-dot"></span>Facturación</div>
+        <div class="step"><span class="step-dot"></span>Envío</div>
+        <div class="step"><span class="step-dot"></span>Recepción</div>
+        <div class="step"><span class="step-dot"></span>Instalación</div>
+        <div class="step"><span class="step-dot"></span>Go Live</div>
+      </div>
+      <div class="store-note">En obra, cerca de terminar. Le interesó pero no está apurado.</div>
+      <span class="store-days">91 días en seguimiento</span>
+    </div>
+
+    <div class="store-card fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">3141 · Santiago del Estero I</div>
+          <div class="store-meta">Santiago del Estero &middot; Nancy Notario</div>
+        </div>
+        <span class="badge badge-blue">Avanzó</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill blue" style="width:16%"></div></div>
+      <div class="steps">
+        <div class="step done"><span class="step-dot"></span>Presentación</div>
+        <div class="step"><span class="step-dot"></span>Facturación</div>
+        <div class="step"><span class="step-dot"></span>Envío</div>
+        <div class="step"><span class="step-dot"></span>Recepción</div>
+        <div class="step"><span class="step-dot"></span>Instalación</div>
+        <div class="step"><span class="step-dot"></span>Go Live</div>
+      </div>
+      <div class="store-note">Local en verde, 400 m².</div>
+      <span class="store-days">23 días en seguimiento</span>
+    </div>
+
+    <div class="store-card muted fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">4744 · Calafate</div>
+          <div class="store-meta">Santa Cruz &middot; Base Sur SRL &middot; Matías Ottonello</div>
+        </div>
+        <span class="badge badge-gray">Sin avance</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill gray" style="width:0%"></div></div>
+      <div class="store-note">No cierra, está en obra.</div>
+      <span class="store-days">114 días en seguimiento</span>
+    </div>
+
+    <div class="store-card muted fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">4467 · Tartagal II</div>
+          <div class="store-meta">Salta &middot; Twin SRL &middot; Luis Ignacio Cura</div>
+        </div>
+        <span class="badge badge-gray">Sin avance</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill gray" style="width:0%"></div></div>
+      <div class="store-note">Sin fecha de presentación.</div>
+      <span class="store-days">91 días en seguimiento</span>
+    </div>
+
+    <div class="store-card muted fade-up">
+      <div class="store-card-header">
+        <div>
+          <div class="store-name">4074 · Puerto Iguazú</div>
+          <div class="store-meta">Misiones &middot; Matías Almuzara</div>
+        </div>
+        <span class="badge badge-gray">Sin avance</span>
+      </div>
+      <div class="progress-bg"><div class="progress-fill gray" style="width:0%"></div></div>
+      <div class="store-note">Sin fecha de presentación.</div>
+      <span class="store-days">91 días en seguimiento</span>
+    </div>
+
+  </div>
+
+  <!-- STOCK -->
+  <div class="section-header">
+    <span class="section-title">Stock de dispositivos</span>
+  </div>
+  <div class="stock-section">
+    <div class="stock-list-card">
+      <div class="chart-card-title" style="margin-bottom:0.75rem;">Stock restante vs inicial</div>
+      <div class="stock-row">
+        <span class="stock-name">Tótems</span>
+        <div class="stock-nums">
+          <div class="stock-bar-bg"><div class="stock-bar-fill" style="width:4%"></div></div>
+          <span class="stock-remaining">96</span>
+          <span class="stock-total">/ 100</span>
+        </div>
+      </div>
+      <div class="stock-row">
+        <span class="stock-name">Ops 15"</span>
+        <div class="stock-nums">
+          <div class="stock-bar-bg"><div class="stock-bar-fill" style="width:4%"></div></div>
+          <span class="stock-remaining">48</span>
+          <span class="stock-total">/ 50</span>
+        </div>
+      </div>
+      <div class="stock-row">
+        <span class="stock-name">Check In 10"</span>
+        <div class="stock-nums">
+          <div class="stock-bar-bg"><div class="stock-bar-fill" style="width:2%"></div></div>
+          <span class="stock-remaining">49</span>
+          <span class="stock-total">/ 50</span>
+        </div>
+      </div>
+      <div class="stock-row">
+        <span class="stock-name">Turnero PC Box</span>
+        <div class="stock-nums">
+          <div class="stock-bar-bg"><div class="stock-bar-fill" style="width:4%"></div></div>
+          <span class="stock-remaining">48</span>
+          <span class="stock-total">/ 50</span>
+        </div>
+      </div>
+      <div class="stock-row">
+        <span class="stock-name">Setups</span>
+        <div class="stock-nums">
+          <div class="stock-bar-bg"><div class="stock-bar-fill" style="width:4%"></div></div>
+          <span class="stock-remaining">48</span>
+          <span class="stock-total">/ 50</span>
+        </div>
+      </div>
+    </div>
+    <div class="stock-list-card">
+      <div class="chart-card-title" style="margin-bottom:0.75rem;">Dispositivos asignados por tienda</div>
+      <table style="width:100%; border-collapse:collapse; font-size:12px;">
+        <thead>
+          <tr>
+            <th style="text-align:left; color:var(--text-tertiary); font-weight:500; padding:0 0 8px; border-bottom:1px solid var(--border); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.04em;">Tienda</th>
+            <th style="text-align:center; color:var(--text-tertiary); font-weight:500; padding:0 0 8px; border-bottom:1px solid var(--border); font-family:'DM Mono',monospace; font-size:10px;">T</th>
+            <th style="text-align:center; color:var(--text-tertiary); font-weight:500; padding:0 0 8px; border-bottom:1px solid var(--border); font-family:'DM Mono',monospace; font-size:10px;">Op</th>
+            <th style="text-align:center; color:var(--text-tertiary); font-weight:500; padding:0 0 8px; border-bottom:1px solid var(--border); font-family:'DM Mono',monospace; font-size:10px;">CI</th>
+            <th style="text-align:center; color:var(--text-tertiary); font-weight:500; padding:0 0 8px; border-bottom:1px solid var(--border); font-family:'DM Mono',monospace; font-size:10px;">PC</th>
+            <th style="text-align:center; color:var(--text-tertiary); font-weight:500; padding:0 0 8px; border-bottom:1px solid var(--border); font-family:'DM Mono',monospace; font-size:10px;">Se</th>
+          </tr>
+        </thead>
+        <tbody id="devicesTable"></tbody>
+      </table>
+      <p style="font-size:10px; color:var(--text-tertiary); margin-top:10px; font-family:'DM Mono',monospace;">T=Tótems &middot; Op=Ops 15" &middot; CI=Check In &middot; PC=Turnero &middot; Se=Setups</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Grido Go — Expansión 100 KC &nbsp;&middot;&nbsp; Datos actualizados al carga de la página &nbsp;&middot;&nbsp; Mayo 2026
+</footer>
+
+<script>
+  const stores = [
+    { id:'5202', name:'Tucumán XXXVI', totems:2, ops:1, ci:0, pc:1, se:1 },
+    { id:'3544', name:'Madryn I',       totems:2, ops:1, ci:1, pc:1, se:1 },
+    { id:'4744', name:'Calafate',        totems:2, ops:1, ci:0, pc:1, se:1 },
+    { id:'4467', name:'Tartagal II',     totems:2, ops:1, ci:0, pc:1, se:1 },
+    { id:'3743', name:'Gualeguaychú III',totems:2, ops:1, ci:0, pc:1, se:1 },
+    { id:'4074', name:'Pto. Iguazú',     totems:2, ops:1, ci:0, pc:1, se:1 },
+    { id:'3973', name:'Villa Gesell',    totems:2, ops:1, ci:0, pc:1, se:1 },
+    { id:'3141', name:'Stgo. del Estero',totems:2, ops:1, ci:0, pc:1, se:1 },
+  ];
+
+  const tbody = document.getElementById('devicesTable');
+  stores.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid var(--border)';
+    tr.innerHTML = `
+      <td style="padding:7px 0; color:var(--text-secondary); font-size:12px;">${s.id} · ${s.name}</td>
+      <td style="text-align:center; font-family:'DM Mono',monospace; font-size:12px; color:var(--text-primary);">${s.totems}</td>
+      <td style="text-align:center; font-family:'DM Mono',monospace; font-size:12px; color:var(--text-primary);">${s.ops}</td>
+      <td style="text-align:center; font-family:'DM Mono',monospace; font-size:12px; color:${s.ci>0?'var(--text-primary)':'var(--text-tertiary)'};">${s.ci}</td>
+      <td style="text-align:center; font-family:'DM Mono',monospace; font-size:12px; color:var(--text-primary);">${s.pc}</td>
+      <td style="text-align:center; font-family:'DM Mono',monospace; font-size:12px; color:var(--text-primary);">${s.se}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Pipeline chart
+  new Chart(document.getElementById('pipelineChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Tucumán XXXVI','Puerto Madryn I','Gualeguaychú III','Villa Gesell','Stgo. del Estero I','Calafate','Tartagal II','Pto. Iguazú'],
+      datasets: [{
+        label: 'Etapas completadas',
+        data: [4, 4, 1, 1, 1, 0, 0, 0],
+        backgroundColor: ['#3A7D1E','#3A7D1E','#BA7517','#BA7517','#378ADD','#C4C2BC','#C4C2BC','#C4C2BC'],
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} de 6 etapas` } }
+      },
+      scales: {
+        x: {
+          max: 6,
+          ticks: { stepSize: 1, callback: v => v + '/6', color: '#9E9C97', font: { size: 11 } },
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          border: { display: false }
+        },
+        y: {
+          ticks: { color: '#6B6860', font: { size: 11 } },
+          grid: { display: false },
+          border: { display: false }
+        }
+      }
+    }
+  });
+
+  // Stock chart
+  new Chart(document.getElementById('stockChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Tótems','Ops 15"','Check In','Turnero','Setups'],
+      datasets: [
+        { label: 'Usado',      data: [4,2,1,2,2],       backgroundColor: '#378ADD', borderRadius: 4, borderSkipped: false },
+        { label: 'Disponible', data: [96,48,49,48,48],  backgroundColor: '#B5D4F4', borderRadius: 4, borderSkipped: false }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index' } },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: { color: '#9E9C97', font: { size: 11 } },
+          grid: { display: false },
+          border: { display: false }
+        },
+        y: {
+          stacked: true,
+          ticks: { color: '#9E9C97', font: { size: 11 } },
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          border: { display: false }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
