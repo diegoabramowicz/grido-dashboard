@@ -267,11 +267,7 @@ const URLS={
   franquicias:BASE+'?gid=115466951&single=true&output=csv',
   stock:BASE+'?gid=541188121&single=true&output=csv'
 };
-function parseCSV(t){const rows=[];let row=[],cell='',inQ=false;for(let i=0;i<t.length;i++){const c=t[i];if(c==='"'){if(inQ&&t[i+1]==='"'){cell+='"';i++;}else{inQ=!inQ;}}else if(c===','&&!inQ){row.push(cell.trim());cell='';}else if((c==='
-'||c==='
-')&&!inQ){if(c==='
-'&&t[i+1]==='
-')i++;row.push(cell.trim());rows.push(row);row=[];cell='';}else{cell+=c;}}if(cell||row.length){row.push(cell.trim());rows.push(row);}return rows;}
+function parseCSV(t){const rows=[];let row=[],cell='',inQ=false;for(let i=0;i<t.length;i++){const c=t[i];if(c==='"'){if(inQ&&t[i+1]==='"'){cell+='"';i++;}else{inQ=!inQ;}}else if(c===','&&!inQ){row.push(cell.trim());cell='';}else if((c==='\n'||c==='\r')&&!inQ){if(c==='\r'&&t[i+1]==='\n')i++;row.push(cell.trim());rows.push(row);row=[];cell='';}else{cell+=c;}}if(cell||row.length){row.push(cell.trim());rows.push(row);}return rows;}
 async function fetchCSV(u){const r=await fetch(u+'&cb='+Date.now());return parseCSV(await r.text());}
 function setBar(p){document.getElementById('loadingBar').style.width=p+'%';}
 function setLT(t){document.getElementById('loadingText').textContent=t;}
