@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Grido Go — Expansión 100 KC</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"><\/script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -268,7 +268,9 @@ const URLS={
   stock:BASE+'?gid=541188121&single=true&output=csv'
 };
 function parseCSV(t){const rows=[];let row=[],cell='',inQ=false;for(let i=0;i<t.length;i++){const c=t[i];if(c==='"'){if(inQ&&t[i+1]==='"'){cell+='"';i++;}else{inQ=!inQ;}}else if(c===','&&!inQ){row.push(cell.trim());cell='';}else if((c==='
-'||c==='')&&!inQ){if(c===''&&t[i+1]==='
+'||c==='
+')&&!inQ){if(c==='
+'&&t[i+1]==='
 ')i++;row.push(cell.trim());rows.push(row);row=[];cell='';}else{cell+=c;}}if(cell||row.length){row.push(cell.trim());rows.push(row);}return rows;}
 async function fetchCSV(u){const r=await fetch(u+'&cb='+Date.now());return parseCSV(await r.text());}
 function setBar(p){document.getElementById('loadingBar').style.width=p+'%';}
@@ -361,6 +363,6 @@ async function init(){
   }catch(err){document.getElementById('loadingText').textContent='Error al cargar. Revisá la conexión.';console.error(err);}
 }
 init();
-<\/script>
+</script>
 </body>
 </html>
