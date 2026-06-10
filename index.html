@@ -134,6 +134,19 @@
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .fade-up { animation: fadeUp 0.4s ease both; }
+
+  /* KPI SEMANA */
+  .kpi-week-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 0; }
+  .kpi-week-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; }
+  .kpi-week-card.accent { border-top: 3px solid var(--red-grido); }
+  .kpi-week-card.accent-money { border-top: 3px solid var(--green-mid); }
+  .kw-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); font-family: 'DM Mono', monospace; margin-bottom: 10px; line-height: 1.4; }
+  .kw-value { font-size: 32px; font-weight: 300; letter-spacing: -0.04em; line-height: 1; color: var(--text-primary); margin-bottom: 4px; }
+  .kw-value.red { color: var(--red-grido); }
+  .kw-value.green { color: var(--green); }
+  .kw-sub { font-size: 11px; color: var(--text-tertiary); font-family: 'DM Mono', monospace; }
+  @media (max-width: 760px) { .kpi-week-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .kpi-week-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -173,7 +186,35 @@
 </div>
 
 <main>
-  <div class="section-header"><span class="section-title">Pipeline & Stock</span></div>
+  <!-- KPIs semanales -->
+  <div class="section-header" style="margin-top:2rem;">
+    <span class="section-title">KPIs de la semana anterior</span>
+    <span class="section-count">sin contar la semana actual</span>
+  </div>
+  <div class="kpi-week-grid">
+    <div class="kpi-week-card accent">
+      <div class="kw-label">Tiendas implementadas</div>
+      <div class="kw-value red" id="kwImplementadas">—</div>
+      <div class="kw-sub">semana anterior</div>
+    </div>
+    <div class="kpi-week-card">
+      <div class="kw-label">Tiendas asignadas</div>
+      <div class="kw-value" id="kwAsignadas">—</div>
+      <div class="kw-sub">semana anterior</div>
+    </div>
+    <div class="kpi-week-card">
+      <div class="kw-label">Envíos realizados</div>
+      <div class="kw-value" id="kwEnvios">—</div>
+      <div class="kw-sub">semana anterior</div>
+    </div>
+    <div class="kpi-week-card accent-money">
+      <div class="kw-label">Stock inmovilizado</div>
+      <div class="kw-value green" id="kwStock">—</div>
+      <div class="kw-sub">valor total</div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:2rem;"><span class="section-title">Pipeline & Stock</span></div>
   <div class="charts-row">
     <div class="chart-card fade-up">
       <div class="chart-card-title">Etapas completadas por tienda</div>
@@ -239,6 +280,7 @@ const URLS = {
   dispositivos: `${BASE}?gid=1562558506&single=true&output=csv`,
   franquicias:  `${BASE}?gid=115466951&single=true&output=csv`,
   stock:        `${BASE}?gid=541188121&single=true&output=csv`,
+  kpis:         `${BASE}?gid=179352294&single=true&output=csv`,
 };
 
 // ─── CSV PARSER ──────────────────────────────────────────────────────────────
@@ -434,6 +476,8 @@ async function init() {
     const fran = await fetchCSV(URLS.franquicias);
     setLoadingText('Leyendo stock...'); setBar(80);
     const stk  = await fetchCSV(URLS.stock);
+    setLoadingText('Leyendo KPIs...'); setBar(88);
+    const kpi  = await fetchCSV(URLS.kpis);
     setLoadingText('Armando el dashboard...'); setBar(95);
 
     // ── Parse seguimiento (skip header row)
@@ -489,6 +533,14 @@ async function init() {
     renderStores(stores, franqMap);
     renderStock(stockData);
     renderDevices(disp);
+
+    // ── KPIs semanales
+    // Fila 4 (index 3): col B (index 1) = implementadas, col E (index 4) = asignadas
+    // Fila 9 (index 8): col B (index 1) = envíos,        col E (index 4) = stock inmovilizado
+    document.getElementById('kwImplementadas').textContent = kpi[3]?.[1] || '0';
+    document.getElementById('kwAsignadas').textContent     = kpi[3]?.[4] || '0';
+    document.getElementById('kwEnvios').textContent        = kpi[8]?.[1] || '0';
+    document.getElementById('kwStock').textContent         = kpi[8]?.[4] || '—';
 
     setBar(100);
     await new Promise(r => setTimeout(r, 300));
