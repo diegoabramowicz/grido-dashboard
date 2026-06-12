@@ -424,9 +424,6 @@ function renderStores(stores, franqMap) {
       <div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${s.status.color};"></div></div>
       <div class="steps">${stepsHtml}</div>
       ${obs ? `<div class="store-note">${obs}</div>` : ''}
-      <div class="store-footer">
-        ${days ? `<span class="store-days">${days} días en seguimiento</span>` : '<span></span>'}
-      </div>
     `;
     grid.appendChild(card);
   });
@@ -535,12 +532,13 @@ async function init() {
     renderDevices(disp);
 
     // ── KPIs semanales
-    // Fila 4 (index 3): col B (index 1) = implementadas, col E (index 4) = asignadas
-    // Fila 9 (index 8): col B (index 1) = envíos,        col E (index 4) = stock inmovilizado
-    document.getElementById('kwImplementadas').textContent = kpi[3]?.[1] || '0';
-    document.getElementById('kwAsignadas').textContent     = kpi[3]?.[4] || '0';
-    document.getElementById('kwEnvios').textContent        = kpi[8]?.[1] || '0';
-    document.getElementById('kwStock').textContent         = kpi[8]?.[4] || '—';
+    // Los títulos tienen saltos de línea internos que desplazan las filas
+    // row[5]: col 1 = implementadas, col 4 = asignadas
+    // row[11]: col 1 = envíos, col 4 = stock inmovilizado
+    document.getElementById('kwImplementadas').textContent = kpi[5]?.[1] || '0';
+    document.getElementById('kwAsignadas').textContent     = kpi[5]?.[4] || '0';
+    document.getElementById('kwEnvios').textContent        = kpi[11]?.[1] || '0';
+    document.getElementById('kwStock').textContent         = kpi[11]?.[4] || '—';
 
     setBar(100);
     await new Promise(r => setTimeout(r, 300));
